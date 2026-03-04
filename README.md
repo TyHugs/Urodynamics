@@ -10,38 +10,33 @@ This single-page website guides patients through everything they need to know ab
 
 ## Features
 
-- **Tabbed navigation** — 7 content sections accessible via sticky tabs with progress indicator
-- **Print-ready handout** — Beautifully formatted one-page print layout with all sections expanded
+- **Tabbed navigation** — 7 content sections with progress indicator
+- **Printable PDF handout** — Print button downloads a polished one-page patient handout
+- **Simplified English mode** — Toggle for plain-language content
 - **Dark mode** — Accessibility toggle for light-sensitive users
 - **Share with Caregiver** — Web Share API with clipboard fallback
 - **Medical term tooltips** — Hover/tap definitions for clinical terms
 - **Patient testimonials** — Anonymized quotes addressing common anxieties
-- **Schema.org structured data** — `MedicalProcedure` markup for SEO
+- **Schema.org structured data** — MedicalProcedure markup for SEO
 - **WCAG 2.1 AA** — 18px base font, 48px touch targets, ARIA roles, keyboard navigation
 - **Mobile-first responsive** — Optimized for 375px through 1440px+
-- **Zero dependencies** — Single self-contained HTML file (Google Fonts CDN only)
+- **Zero build dependencies** — Self-contained HTML + static PDF asset
 
 ## Files
 
 ```
-index.html      # Main landing page (also generates print handout)
-.nojekyll       # Bypass Jekyll processing on GitHub Pages
-README.md       # This file
+index.html                  # Main landing page
+urodynamics-handout.pdf     # One-page printable patient handout
+.nojekyll                   # Bypass Jekyll processing on GitHub Pages
+README.md                   # This file
 ```
 
 ## Deployment (GitHub Pages)
 
 1. Push this repository to GitHub
-2. Go to **Settings → Pages**
-3. Set source to **Deploy from a branch** → `main` → `/ (root)`
+2. Go to **Settings > Pages**
+3. Set source to **Deploy from a branch** > `main` > `/ (root)`
 4. Site will be live at `https://<username>.github.io/<repo-name>/`
-
-## Design Decisions
-
-- **Patient persona**: Skews older (50-80+), potentially anxious, limited digital literacy, often accompanied by caregiver
-- **Core objective**: Reduce no-show/cancellation rates by addressing root causes: fear, uncertainty, embarrassment
-- **Branding**: Official Michigan Medicine maize and blue palette
-- **Content strategy**: Empathetic, non-clinical tone using "you" throughout; validated by 10-member expert panel review
 
 ## License
 
