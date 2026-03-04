@@ -11,7 +11,7 @@ This single-page website guides patients through everything they need to know ab
 ## Features
 
 - **Tabbed navigation** — 7 content sections with progress indicator
-- **Printable PDF handout** — Print button downloads a polished one-page patient handout
+- **Print-ready** — Print button expands all sections into a polished one-page layout
 - **Simplified English mode** — Toggle for plain-language content
 - **Dark mode** — Accessibility toggle for light-sensitive users
 - **Share with Caregiver** — Web Share API with clipboard fallback
@@ -20,15 +20,14 @@ This single-page website guides patients through everything they need to know ab
 - **Schema.org structured data** — MedicalProcedure markup for SEO
 - **WCAG 2.1 AA** — 18px base font, 48px touch targets, ARIA roles, keyboard navigation
 - **Mobile-first responsive** — Optimized for 375px through 1440px+
-- **Zero build dependencies** — Self-contained HTML + static PDF asset
+- **Zero dependencies** — Single self-contained HTML file (Google Fonts CDN only)
 
 ## Files
 
 ```
-index.html                  # Main landing page
-urodynamics-handout.pdf     # One-page printable patient handout
-.nojekyll                   # Bypass Jekyll processing on GitHub Pages
-README.md                   # This file
+index.html      # Main landing page
+.nojekyll       # Bypass Jekyll processing on GitHub Pages
+README.md       # This file
 ```
 
 ## Deployment (GitHub Pages)
