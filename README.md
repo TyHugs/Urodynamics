@@ -11,9 +11,8 @@ This single-page website guides patients through everything they need to know ab
 ## Features
 
 - **Tabbed navigation** — 7 content sections accessible via sticky tabs with progress indicator
-- **Simplified English mode** — One-click toggle for plain-language content throughout
+- **Print-ready handout** — Beautifully formatted one-page print layout with all sections expanded
 - **Dark mode** — Accessibility toggle for light-sensitive users
-- **Print-ready** — Dedicated print stylesheet expands all sections; companion PDF handout included
 - **Share with Caregiver** — Web Share API with clipboard fallback
 - **Medical term tooltips** — Hover/tap definitions for clinical terms
 - **Patient testimonials** — Anonymized quotes addressing common anxieties
@@ -25,10 +24,9 @@ This single-page website guides patients through everything they need to know ab
 ## Files
 
 ```
-index.html                          # Main landing page
-urodynamics-patient-handout.pdf     # Companion 1-page printable handout
-.nojekyll                           # Bypass Jekyll processing on GitHub Pages
-README.md                           # This file
+index.html      # Main landing page (also generates print handout)
+.nojekyll       # Bypass Jekyll processing on GitHub Pages
+README.md       # This file
 ```
 
 ## Deployment (GitHub Pages)
@@ -40,14 +38,10 @@ README.md                           # This file
 
 ## Design Decisions
 
-- **Patient persona**: Skews older (50–80+), potentially anxious, limited digital literacy, often accompanied by caregiver
-- **Core objective**: Reduce no-show/cancellation rates by addressing root causes — fear, uncertainty, embarrassment
-- **Branding**: Official Michigan Medicine maize & blue palette
+- **Patient persona**: Skews older (50-80+), potentially anxious, limited digital literacy, often accompanied by caregiver
+- **Core objective**: Reduce no-show/cancellation rates by addressing root causes: fear, uncertainty, embarrassment
+- **Branding**: Official Michigan Medicine maize and blue palette
 - **Content strategy**: Empathetic, non-clinical tone using "you" throughout; validated by 10-member expert panel review
-
-## Expert Panel Review
-
-This page was reviewed by a simulated 10-member panel including patients, urologists, UX designers, a frontend engineer, a patient experience officer, a healthcare strategy consultant, and a cross-disciplinary synthesizer. All recommendations from the review were implemented in the current version.
 
 ## License
 

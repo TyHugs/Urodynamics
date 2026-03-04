@@ -36,6 +36,8 @@
 }
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -972,7 +974,7 @@
         <span class="tool-label">Share</span>
       </button>
       <!-- Print (P1) -->
-      <button class="tool-btn" onclick="window.print()" aria-label="Print this page">
+      <button class="tool-btn" onclick="generatePDF()" aria-label="Download PDF handout">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         <span class="tool-label">Print</span>
       </button>
@@ -1578,6 +1580,176 @@
         setTimeout(() => btn.innerHTML = orig, 2000);
       });
     }
+  }
+
+  // ━━━ PDF HANDOUT GENERATOR ━━━
+  function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+    const W = 612, H = 792, M = 36, CW = W - M * 2;
+    let y = 0;
+
+    const BLUE = [0,39,76], MAIZE = [255,203,5], MID = [0,51,102];
+    const TEXT = [26,42,58], SEC = [74,90,106], LIGHT = [106,122,138];
+    const GREEN = [27,122,61], BG = [232,240,248], CREAM = [255,249,229];
+    const GBORDER = [216,226,236], WHITE = [255,255,255];
+
+    const sf = (s,sz,c) => { doc.setFont('helvetica',s); doc.setFontSize(sz); doc.setTextColor(...c); };
+    const rect = (x,yy,w,h,f,r) => { doc.setFillColor(...f); r ? doc.roundedRect(x,yy,w,h,r,r,'F') : doc.rect(x,yy,w,h,'F'); };
+    const line = (x1,yy,x2,c,w) => { doc.setDrawColor(...c); doc.setLineWidth(w||0.5); doc.line(x1,yy,x2,yy); };
+    const wrap = (t,mw,sz) => { doc.setFontSize(sz); return doc.splitTextToSize(t,mw); };
+
+    // ── HEADER BAR ──
+    rect(0, 0, W, 50, BLUE); rect(0, 50, W, 3, MAIZE);
+    sf('bold',13,WHITE); doc.text('Michigan Medicine', M+4, 22);
+    sf('normal',8.5,[180,200,220]); doc.text('Department of Urology', M+4, 34);
+    sf('normal',7.5,[180,200,220]); doc.text('Patient Handout', W-M-4, 28, {align:'right'});
+    y = 66;
+
+    // ── TITLE ──
+    sf('bold',18,BLUE); doc.text('Your Urodynamics Study', M, y); y += 13;
+    sf('normal',8.5,SEC);
+    doc.text('Everything you need to know about your upcoming test \u2014 a quick reference to keep or share.', M, y); y += 7;
+    line(M, y, W-M, MAIZE, 2); y += 12;
+
+    // ── TWO COLUMN: What Is It + Why It Matters ──
+    const colW = (CW - 14) / 2;
+    const topY = y;
+
+    // Left: What Is It
+    sf('bold',10,BLUE); doc.text('What Is a Urodynamics Study?', M, y); y += 12;
+    sf('normal',7.8,TEXT);
+    const whatL = wrap('A safe, routine test that measures how well your bladder stores and releases urine. It helps your doctor understand what\u2019s causing your symptoms \u2014 so they can find the best treatment for you.', colW, 7.8);
+    doc.text(whatL, M, y); y += whatL.length * 10 + 5;
+
+    const pills = ['Not surgery \u2014 no anesthesia needed','Takes about 30\u201345 minutes','You can drive yourself home','Resume normal activities same day'];
+    pills.forEach(p => {
+      rect(M, y-7.5, colW, 13, [232,245,236], 3);
+      sf('normal',7.2,GREEN); doc.text('\u2713  ' + p, M+5, y);
+      y += 15;
+    });
+
+    // Right: Why It Matters
+    let ry = topY;
+    const rx = M + colW + 14;
+    rect(rx-4, ry-10, colW+8, 58, BLUE, 5);
+    sf('bold',10,WHITE); doc.text('Why This Test Matters', rx+2, ry); ry += 12;
+    sf('normal',7.5,[200,215,230]);
+    const whyL = wrap('Without these results, your doctor cannot move forward with treatment. This single test can be the turning point toward feeling better. Whatever the results show, knowing is always better than not knowing.', colW-4, 7.5);
+    doc.text(whyL, rx+2, ry); ry += whyL.length * 10 + 12;
+
+    [['1','Answers Only This Test Provides','No other exam or imaging gives this information.'],
+     ['2','Faster Path to Relief','Sooner results mean sooner treatment.'],
+     ['3','A Short Commitment','30\u201345 min now prevents months of symptoms.']
+    ].forEach(([n,t,d]) => {
+      rect(rx, ry-8, colW, 24, BG, 3);
+      sf('bold',14,MAIZE); doc.text(n, rx+6, ry+5);
+      sf('bold',7.5,BLUE); doc.text(t, rx+22, ry-1);
+      sf('normal',6.8,SEC); doc.text(d, rx+22, ry+8);
+      ry += 27;
+    });
+
+    y = Math.max(y, ry) + 4;
+    line(M, y, W-M, GBORDER, 0.5); y += 10;
+
+    // ── WHAT TO EXPECT ──
+    sf('bold',10,BLUE); doc.text('What to Expect: Step by Step', M, y); y += 14;
+
+    const steps = [
+      ['Check In','Before','Arrive & check in. A nurse brings you to a private room and explains everything.'],
+      ['Setup','~5 min','Small, thin sensors placed gently. Numbing gel used for comfort. Nurse stays with you.'],
+      ['The Study','20\u201330 min','Bladder slowly filled with sterile water while sensors record. You answer simple questions.'],
+      ['All Done','Same day','Sensors removed in seconds. No recovery. Mild tingling for a day or two is normal.']
+    ];
+    const stepW = (CW - 18) / 4;
+    steps.forEach((s,i) => {
+      const sx = M + i * (stepW + 6);
+      rect(sx + stepW/2 - 9, y-8, 18, 18, BLUE, 9);
+      sf('bold',9,WHITE); doc.text(String(i+1), sx+stepW/2, y+3, {align:'center'});
+      const cy = y + 14;
+      rect(sx, cy, stepW, 54, BG, 4);
+      sf('bold',6.5,MID); doc.text(s[1], sx+5, cy+9);
+      sf('bold',7.8,BLUE); doc.text(s[0], sx+5, cy+19);
+      sf('normal',6.5,SEC);
+      const sL = wrap(s[2], stepW-10, 6.5);
+      doc.text(sL, sx+5, cy+28);
+    });
+    y += 74;
+    line(M, y, W-M, GBORDER, 0.5); y += 10;
+
+    // ── HOW TO PREPARE ──
+    sf('bold',10,BLUE); doc.text('How to Prepare', M, y); y += 12;
+    const prepW = (CW - 12) / 2;
+
+    rect(M, y-8, prepW, 68, [232,245,236], 4);
+    sf('bold',8.5,GREEN); doc.text('\u2713  Do:', M+6, y);
+    sf('normal',7.2,TEXT);
+    ['Arrive with a comfortably full bladder','Bring your medication list',
+     'Wear comfortable, easy-to-change clothing','Bring insurance card & photo ID',
+     'Eat and drink normally \u2014 no fasting'].forEach((t,i) => {
+      doc.text('\u2022  '+t, M+8, y+11+i*10);
+    });
+
+    const dx = M + prepW + 12;
+    rect(dx, y-8, prepW, 68, [253,236,234], 4);
+    sf('bold',8.5,[192,57,43]); doc.text('\u2717  Don\u2019t:', dx+6, y);
+    sf('normal',7.2,TEXT);
+    ['Don\u2019t empty your bladder right before','Don\u2019t stop medications unless told to',
+     'Don\u2019t worry about \u201cperforming\u201d','Don\u2019t hesitate to ask us questions'].forEach((t,i) => {
+      doc.text('\u2022  '+t, dx+8, y+11+i*10);
+    });
+
+    y += 66;
+    rect(M, y, CW, 18, CREAM, 3);
+    sf('bold',6.8,[120,100,20]); doc.text('Note:', M+6, y+11);
+    sf('normal',6.8,SEC);
+    doc.text('If you take blood thinners or have an indwelling catheter, let your care team know in advance for specific guidance.', M+30, y+11);
+    y += 24;
+    line(M, y, W-M, GBORDER, 0.5); y += 10;
+
+    // ── BOTTOM: Patients Say + FAQ ──
+    const bW = (CW - 12) / 2;
+    sf('bold',10,BLUE); doc.text('What Patients Say', M, y);
+    sf('bold',10,BLUE); doc.text('Common Questions', M+bW+12, y); y += 12;
+
+    const quotes = [
+      ['\u201cI was so nervous I almost canceled. But it was over before I knew it.\u201d','R.M., Age 67'],
+      ['\u201cThe worst part was the anticipation. I drove home and went grocery shopping.\u201d','S.K., Age 54'],
+      ['\u201cThe staff made it easier than expected. We finally have a real plan.\u201d','M.C., Age 62']
+    ];
+    let qy = y;
+    quotes.forEach(([q,a]) => {
+      rect(M, qy-6, bW, 30, BG, 3);
+      sf('italic',6.8,SEC);
+      const qL = wrap(q, bW-14, 6.8);
+      doc.text(qL, M+7, qy+1);
+      sf('normal',6.2,LIGHT); doc.text('\u2014 '+a, M+7, qy+1+qL.length*9);
+      qy += 33;
+    });
+
+    const faqs = [
+      ['Does it hurt?','Mild discomfort, not painful. Numbing gel helps. Most say easier than expected.'],
+      ['How long?','About 45 min\u20131 hour total. The test itself is 20\u201330 min.'],
+      ['Can I drive home?','Yes! No sedation or anesthesia is used.'],
+      ['Embarrassed?','You\u2019re not alone. Private room, experienced team. Your comfort is our priority.'],
+      ['Thinking of canceling?','Most are glad they came. Results unlock your treatment plan. Rescheduling takes weeks.']
+    ];
+    const fx = M + bW + 12;
+    let fy = y;
+    faqs.forEach(([q,a]) => {
+      sf('bold',7.2,BLUE); doc.text(q, fx, fy);
+      sf('normal',6.5,SEC);
+      const aL = wrap(a, bW-4, 6.5);
+      doc.text(aL, fx, fy+9);
+      fy += 9 + aL.length * 8.5 + 3.5;
+    });
+
+    // ── FOOTER ──
+    line(M, H-30, W-M, MAIZE, 2);
+    sf('normal',6.8,LIGHT);
+    doc.text('Michigan Medicine  \u2022  Department of Urology  \u2022  1500 E. Medical Center Drive  \u2022  Ann Arbor, MI 48109', W/2, H-18, {align:'center'});
+
+    doc.save('Urodynamics-Study-Patient-Handout.pdf');
   }
 </script>
 </body>
